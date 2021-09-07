@@ -12,21 +12,7 @@ const center = {
 };
 
 const LocationMap = ({ locations, selectedLocation, defaultCenter, defaultZoom }) => {
-    const [mapCenter, setMapCenter] = useState(defaultCenter || center);
     const [selectedMarker, setSelectedMarker] = useState();
-
-    defaultZoom = defaultZoom || 11;
-
-    // useEffect(() => {
-    //   if (!("geolocation" in navigator)) return;
-    //   navigator.geolocation.getCurrentPosition((position) => {
-    //     if (!position || !position.coords) return;
-    //     setMapCenter({
-    //       lat: position.coords.latitude,
-    //       lng: position.coords.longitude
-    //     });
-    //   });
-    // }, []);
 
     useEffect(() => {
       if (!selectedLocation) return;
@@ -35,18 +21,14 @@ const LocationMap = ({ locations, selectedLocation, defaultCenter, defaultZoom }
       setSelectedMarker(selectedLocation);
     }, [selectedLocation]);
 
-    useEffect(() => {
-      setMapCenter(defaultCenter || center);
-    }, [defaultCenter]);
-
     return (
         <LoadScript 
           googleMapsApiKey={process.env.REACT_APP_MAP_API_KEY}
         >
           <GoogleMap
             mapContainerStyle={containerStyle}
-            center={mapCenter}
-            zoom={defaultZoom}
+            center={center}
+            zoom={11}
           >
             { 
                 locations.map((e, c) => <Marker key={`marker${c}`} position={{ lat: parseFloat(e.Latitude), lng: parseFloat(e.Longitude) }} onClick={() => setSelectedMarker(e)} />)

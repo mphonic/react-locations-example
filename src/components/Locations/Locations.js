@@ -11,27 +11,8 @@ const Locations = (props) => {
     const [filteredDistributors, setFilteredDistributors] = useState(Object.assign([], distributors));
     const [selectedLocation, setSelectedLocation] = useState();
     const [startIndex, setStartIndex] = useState(0);
-    const [mapCenter, setMapCenter] = useState();
     const scrollTopRoot = useRef();
     const scrollTopList = useRef();
-
-    const filterByTaxonomies = useCallback((taxonomyGuids) => {
-        setStartIndex(0); // reset paging
-        if (!taxonomyGuids || !taxonomyGuids.length) {
-            setFilteredDistributors([...rawDistributors]);
-            return;
-        }
-
-        const filtered = rawDistributors.filter(e => {
-            let hasMatch = false;
-            taxonomyGuids.some(t => {
-                hasMatch = e.AdditionalTaxonomyTags.indexOf(t) > -1;
-                return hasMatch;
-            });
-            return hasMatch;
-        });
-        setFilteredDistributors(filtered);
-    }, [rawDistributors]);
 
     const onLocationSelected = useCallback((location) => {
         setSelectedLocation(location);
@@ -43,16 +24,10 @@ const Locations = (props) => {
         setTimeout(() => scrollTopList.current.scrollIntoView({ behavior: 'smooth' }));
     }, []);
 
-    const onLocationChange = useCallback((center) => {
-        setMapCenter(center);
-        setTimeout(() => scrollTopRoot.current.scrollIntoView({ behavior: 'smooth' }));
-    }, []);
-
     return (
         <section ref={scrollTopRoot}>
             <div className="flexDirectionCol">
-                <LocationMap locations={rawDistributors} selectedLocation={selectedLocation} defaultCenter={mapCenter} />
-                <LocationFilter locations={rawDistributors} onSelectionChange={filterByTaxonomies} onLocationChange={onLocationChange} />
+                <LocationMap locations={rawDistributors} selectedLocation={selectedLocation} />
             </div>
             <div ref={scrollTopList} className="flexDirectionCol">
                 {
