@@ -1,0 +1,32 @@
+.pager {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.pagerInfo {
+    padding: 1rem 0;
+    width: 100%;
+    text-align: center;
+}
+
+.pagerList {
+    display: flex;
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+}
+
+.pagerList > div,
+.pagerGroup > div {
+    display: inline-block;
+}
+
+.pagerGroup > div {
+    margin: 0 0.25rem;
+}
+
+  
+.pagerGroup > div.selected a {
+    text-decoration: none;
+}
