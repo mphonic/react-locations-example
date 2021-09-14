@@ -1,16 +1,15 @@
 import { useState, useEffect, useCallback } from "react";
 import taxonomyMap from '../../data/TaxonomyMap';
 
-const getAllTaxonomyGuids = (locations) => 
-    new Set(
-        locations
-            .filter(e => !!e.AdditionalTaxonomyTags)
-            .map(e => e.AdditionalTaxonomyTags
-                        .replace(/[{}]/g, '')
-                        .split('|')
-            )
-            .flat()
-    );
+const getAllTaxonomyGuids = (locations) => new Set(
+    locations
+        .filter(e => !!e.AdditionalTaxonomyTags)
+        .map(e => e.AdditionalTaxonomyTags
+                    .replace(/[{}]/g, '')
+                    .split('|')
+        )
+        .flat()
+);
 
 const LocationFilter = ({ locations, onSelectionChange, onLocationChange }) => {
     const [allTaxonomyGuids, setAllTaxonomyGuids] = useState(new Set());
