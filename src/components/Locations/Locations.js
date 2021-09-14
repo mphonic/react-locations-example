@@ -16,11 +16,13 @@ const Locations = (props) => {
 
     const filterByTaxonomies = useCallback((taxonomyGuids) => {
         setStartIndex(0);
-        taxonomyGuids = Array.from(taxonomyGuids);
-        if (!taxonomyGuids || !taxonomyGuids.length) {
+
+        if (!taxonomyGuids || !taxonomyGuids.size) {
             setFilteredDistributors([...rawDistributors]);
             return;
         }
+
+        taxonomyGuids = Array.from(taxonomyGuids);
 
         const filtered = rawDistributors.filter(e => {
             let hasMatch = false;
