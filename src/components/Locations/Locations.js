@@ -14,6 +14,25 @@ const Locations = (props) => {
     const scrollTopRoot = useRef();
     const scrollTopList = useRef();
 
+    const filterByTaxonomies = useCallback((taxonomyGuids) => {
+        setStartIndex(0);
+        taxonomyGuids = Array.from(taxonomyGuids);
+        if (!taxonomyGuids || !taxonomyGuids.length) {
+            setFilteredDistributors([...rawDistributors]);
+            return;
+        }
+
+        const filtered = rawDistributors.filter(e => {
+            let hasMatch = false;
+            taxonomyGuids.some(t => {
+                hasMatch = e.AdditionalTaxonomyTags.indexOf(t) > -1;
+                return hasMatch;
+            });
+            return hasMatch;
+        });
+        setFilteredDistributors(filtered);
+    }, [rawDistributors]);
+
     const onLocationSelected = useCallback((location) => {
         setSelectedLocation(location);
         setTimeout(() => scrollTopRoot.current.scrollIntoView({ behavior: 'smooth' }));
@@ -28,6 +47,7 @@ const Locations = (props) => {
         <section ref={scrollTopRoot}>
             <div className="flexDirectionCol">
                 <LocationMap locations={rawDistributors} selectedLocation={selectedLocation} />
+                <LocationFilter locations={rawDistributors} onSelectionChange={filterByTaxonomies} />
             </div>
             <div ref={scrollTopList} className="flexDirectionCol">
                 {
