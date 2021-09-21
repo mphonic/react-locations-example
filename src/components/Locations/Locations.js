@@ -6,6 +6,31 @@ import LocationDetail from "./LocationDetail";
 import Pager from "../Utility/Pager";
 
 const itemsPerPage = 20;
+
+const filterBySearchString = (searchString, distributors) => {
+    if (!searchString) return distributors;
+    const filtered = distributors.filter(e => e.LocationName.toLowerCase().indexOf(searchString) > -1 || e.City.toLowerCase().indexOf(searchString) > -1);
+    return filtered;
+}
+
+const filterByTaxonomies = (taxonomyGuids, distributors) => {
+    if (!taxonomyGuids || !taxonomyGuids.size) {
+        return distributors;
+    }
+
+    const taxonomyGuidsArray = Array.from(taxonomyGuids);
+
+    const filtered = distributors.filter(e => {
+        let hasMatch = false;
+        taxonomyGuidsArray.some(t => {
+            hasMatch = e.AdditionalTaxonomyTags.indexOf(t) > -1;
+            return hasMatch;
+        });
+        return hasMatch;
+    });
+    return filtered;
+};
+
 const Locations = (props) => {
     const [rawDistributors, setRawDistributors] = useState(distributors); // just using static distributors now
     const [filteredDistributors, setFilteredDistributors] = useState(Object.assign([], distributors));
@@ -18,49 +43,19 @@ const Locations = (props) => {
     const scrollTopList = useRef();
 
     useEffect(() => {
-        performFiltering();
+        let filtered = filterByTaxonomies(taxonomyGuids, rawDistributors);
+        filtered = filterBySearchString(searchString, filtered);
+        setStartIndex(0);
+        setFilteredDistributors(filtered);
     }, [taxonomyGuids, searchString]);
 
-    const filterByTaxonomies = () => {
-        setStartIndex(0);
+    const onTaxonomyChanged = useCallback((guids) => {
+        setTaxonomyGuids(new Set(guids));
+    }, [setTaxonomyGuids]);
 
-        if (!taxonomyGuids || !taxonomyGuids.size) {
-            setFilteredDistributors([...rawDistributors]);
-            return rawDistributors;
-        }
-
-        const taxonomyGuidsArray = Array.from(taxonomyGuids);
-
-        const filtered = rawDistributors.filter(e => {
-            let hasMatch = false;
-            taxonomyGuidsArray.some(t => {
-                hasMatch = e.AdditionalTaxonomyTags.indexOf(t) > -1;
-                return hasMatch;
-            });
-            return hasMatch;
-        });
-        return filtered;
-    };
-
-    const filterBySearchString = (distributors) => {
-        if (!searchString) return distributors;
-        const filtered = distributors.filter(e => e.LocationName.toLowerCase().indexOf(searchString) > -1 || e.City.toLowerCase().indexOf(searchString) > -1);
-        return filtered;
-    };
-
-    const performFiltering = () => {
-        let filtered = filterByTaxonomies();
-        filtered = filterBySearchString(filtered);
-        setFilteredDistributors(filtered);
-    };
-
-    const onTaxonomyChanged = (taxonomyGuids) => {
-        setTaxonomyGuids(new Set(taxonomyGuids));
-    };
-
-    const onSearchStringChanged = (string) => {
+    const onSearchStringChanged = useCallback((string) => {
         setSearchString(string.trim().toLowerCase());
-    };
+    }, [setSearchString]);
 
     const onLocationSelected = useCallback((location) => {
         setSelectedLocation(location);
