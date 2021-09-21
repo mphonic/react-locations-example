@@ -11,7 +11,7 @@ const getAllTaxonomyGuids = (locations) => new Set(
         .flat()
 );
 
-const LocationFilter = ({ locations, onSelectionChange, onLocationChange }) => {
+const LocationFilter = ({ locations, onSelectionChange, onLocationChange, onSearchChange }) => {
     const [allTaxonomyGuids, setAllTaxonomyGuids] = useState(new Set());
     const [selectedTaxonomies, setSelectedTaxonomies] = useState(new Set());
 
@@ -27,16 +27,34 @@ const LocationFilter = ({ locations, onSelectionChange, onLocationChange }) => {
         onSelectionChange && onSelectionChange(selected);
     }, [onSelectionChange]);
 
+    const setToCurrentLocation = useCallback(() => {
+        navigator.geolocation.getCurrentPosition((position) => {
+            if (!position || !position.coords) return;
+            onLocationChange && onLocationChange({
+                lat: position.coords.latitude,
+                lng: position.coords.longitude
+            })
+        })
+    }, [onLocationChange]);
+
+    const updateSearchString = useCallback((e) => {
+        onSearchChange && onSearchChange(e.target.value);
+    }, [onSearchChange]);
+
     return (
         <section className="locationFilter">
+            <button onClick={() => setToCurrentLocation()}>Use Current Location</button>
             <h1>Refine Results</h1>
+            <div>
+                <input type="search" onChange={updateSearchString} placeholder="Search Locations" />
+            </div>
             <ul>
                 {
                     Array.from(allTaxonomyGuids).map((e, c) => (
                         taxonomyMap[e] &&
                         <li key={`taxonomy${c}`}>
-                            <label onClick={() => updateSelectedTaxonomies(e, selectedTaxonomies)}>
-                                <input type="checkbox" defaultChecked={selectedTaxonomies.has(e)} /> { taxonomyMap[e] }
+                            <label>
+                                <input onChange={() => updateSelectedTaxonomies(e, selectedTaxonomies)} type="checkbox" defaultChecked={selectedTaxonomies.has(e)} /> { taxonomyMap[e] }
                             </label>
                         </li>
                     ))

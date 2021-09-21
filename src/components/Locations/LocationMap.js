@@ -12,6 +12,7 @@ const center = {
 };
 
 const LocationMap = ({ locations, selectedLocation, defaultCenter, defaultZoom }) => {
+    const [mapCenter, setMapCenter] = useState(defaultCenter || center);
     const [selectedMarker, setSelectedMarker] = useState();
 
     useEffect(() => {
@@ -21,13 +22,17 @@ const LocationMap = ({ locations, selectedLocation, defaultCenter, defaultZoom }
       setSelectedMarker(selectedLocation);
     }, [selectedLocation]);
 
+    useEffect(() => {
+      setMapCenter(defaultCenter || center);
+    }, [defaultCenter]);
+
     return (
         <LoadScript 
           googleMapsApiKey={process.env.REACT_APP_MAP_API_KEY}
         >
           <GoogleMap
             mapContainerStyle={containerStyle}
-            center={center}
+            center={mapCenter}
             zoom={11}
           >
             { 
