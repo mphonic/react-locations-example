@@ -21,12 +21,9 @@ const filterByTaxonomies = (taxonomyGuids, distributors) => {
     const taxonomyGuidsArray = Array.from(taxonomyGuids);
 
     const filtered = distributors.filter(e => {
-        let hasMatch = false;
-        taxonomyGuidsArray.some(t => {
-            hasMatch = e.AdditionalTaxonomyTags.indexOf(t) > -1;
-            return hasMatch;
+        return taxonomyGuidsArray.some(t => {
+            return e.AdditionalTaxonomyTags.indexOf(t) > -1;
         });
-        return hasMatch;
     });
     return filtered;
 };
