@@ -59,7 +59,11 @@ const Locations = (props) => {
         <section ref={scrollTopRoot}>
             <div className="flexDirectionCol">
                 <LocationMap locations={rawDistributors} selectedLocation={selectedLocation} defaultCenter={mapCenter} />
-                <LocationFilter locations={rawDistributors} onSelectionChange={(guids) => setTaxonomyGuids(new Set(guids))} onLocationChange={(location) => setMapCenter(location)} onSearchChange={(onSearchStringChanged)} />
+                <LocationFilter 
+                    locations={rawDistributors} 
+                    onSelectionChange={(guids) => setTaxonomyGuids(new Set(guids))} 
+                    onLocationChange={(location) => setMapCenter(location)} 
+                    onSearchChange={(onSearchStringChanged)} />
             </div>
             <div ref={scrollTopList} className="flexDirectionCol">
                 {
