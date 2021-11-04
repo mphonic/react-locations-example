@@ -1,6 +1,6 @@
-const LocationDetail = ({ location, onLocationSelected }) => {
+const LocationDetail = ({ location }) => {
     return (
-        <div className="locationDetail" onClick={e => onLocationSelected && onLocationSelected(location)}>
+        <div className="locationDetail">
             <h1>{location.LocationName}</h1>
             <address>
                 <div>{location.AddressLine1}</div>
