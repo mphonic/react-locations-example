@@ -12,12 +12,7 @@ const getAllTaxonomyGuids = (locations) => new Set(
 );
 
 const LocationFilter = ({ locations, onSelectionChange, onLocationChange, onSearchChange }) => {
-    const [allTaxonomyGuids, setAllTaxonomyGuids] = useState(new Set());
     const [selectedTaxonomies, setSelectedTaxonomies] = useState(new Set());
-
-    useEffect(() => {
-        setAllTaxonomyGuids(getAllTaxonomyGuids(locations));
-    }, []);
 
     const updateSelectedTaxonomies = useCallback((taxonomy, selected) => {
         if (selected.has(taxonomy)) selected.delete(taxonomy);
@@ -50,7 +45,7 @@ const LocationFilter = ({ locations, onSelectionChange, onLocationChange, onSear
             </div>
             <ul>
                 {
-                    Array.from(allTaxonomyGuids).map((e, c) => (
+                    Array.from(getAllTaxonomyGuids(locations)).map((e, c) => (
                         taxonomyMap[e] &&
                         <li key={`taxonomy${c}`}>
                             <label>

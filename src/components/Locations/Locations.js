@@ -44,46 +44,32 @@ const Locations = (props) => {
         filtered = filterBySearchString(searchString, filtered);
         setStartIndex(0);
         setFilteredDistributors(filtered);
-    }, [taxonomyGuids, searchString]);
+    }, [taxonomyGuids, searchString, rawDistributors]);
 
-    const onTaxonomyChanged = useCallback((guids) => {
-        setTaxonomyGuids(new Set(guids));
-    }, [setTaxonomyGuids]);
+    useEffect(() => scrollTopRoot.current.scrollIntoView({ behavior: 'smooth' }), [selectedLocation, mapCenter]);
+
+    useEffect(() => scrollTopList.current.scrollIntoView({ behavior: 'smooth' }), [startIndex]);
 
     const onSearchStringChanged = useCallback((string) => {
+        // we might want to introduce some more complex logic here; minimum length, debounce, etc.
         setSearchString(string.trim().toLowerCase());
     }, [setSearchString]);
-
-    const onLocationSelected = useCallback((location) => {
-        setSelectedLocation(location);
-        setTimeout(() => scrollTopRoot.current.scrollIntoView({ behavior: 'smooth' }));
-    }, []);
-
-    const onPageChange = useCallback((index) => {
-        setStartIndex(index);
-        setTimeout(() => scrollTopList.current.scrollIntoView({ behavior: 'smooth' }));
-    }, []);
-
-    const onLocationChanged = useCallback((location) => {
-        setMapCenter(location);
-        setTimeout(() => scrollTopRoot.current.scrollIntoView({ behavior: 'smooth' }));
-    }, []);
 
     return (
         <section ref={scrollTopRoot}>
             <div className="flexDirectionCol">
                 <LocationMap locations={rawDistributors} selectedLocation={selectedLocation} defaultCenter={mapCenter} />
-                <LocationFilter locations={rawDistributors} onSelectionChange={onTaxonomyChanged} onLocationChange={onLocationChanged} onSearchChange={onSearchStringChanged} />
+                <LocationFilter locations={rawDistributors} onSelectionChange={(guids) => setTaxonomyGuids(new Set(guids))} onLocationChange={(location) => setMapCenter(location)} onSearchChange={(onSearchStringChanged)} />
             </div>
             <div ref={scrollTopList} className="flexDirectionCol">
                 {
                     filteredDistributors
                         .slice(startIndex, itemsPerPage + startIndex)
-                        .map((e, c) => <LocationDetail key={`location${c}`} location={e} onLocationSelected={onLocationSelected} />)
+                        .map((e, c) => <LocationDetail key={`location${c}`} location={e} onLocationSelected={(location) => setSelectedLocation(location)} />)
                 }
             </div>
             <div>
-                <Pager numItems={filteredDistributors.length} defaultIndex={startIndex} itemsPerPage={itemsPerPage} onPageChange={onPageChange} />
+                <Pager numItems={filteredDistributors.length} defaultIndex={startIndex} itemsPerPage={itemsPerPage} onPageChange={(index) => setStartIndex(index)} />
             </div>
         </section>
     )
